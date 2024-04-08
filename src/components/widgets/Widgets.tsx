@@ -1,8 +1,8 @@
-import { Widgets } from "../../types";
+import { Widgets as WidgetsSchema } from "../../types";
 import Widget from "../widget/Widget";
 
 type WidgetProps = {
-	widgets: Widgets;
+	widgets: WidgetsSchema;
 };
 
 const Widgets = ({ widgets }: WidgetProps) => {

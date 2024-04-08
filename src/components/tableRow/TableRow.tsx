@@ -1,107 +1,79 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Rows } from "../../types";
-import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-
-type RowInputProps = {
-	name: string;
-	currentValue: string | number;
-	updateUserData: (data: object) => void;
-};
-
-const RowInput = ({ name, currentValue, updateUserData }: RowInputProps) => {
-	const [value, setValue] = useState(currentValue);
-
-	useEffect(() => {
-		updateUserData({ [name]: currentValue });
-	}, [name, currentValue, updateUserData]);
-
-	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-		setValue(e.target.value);
-		updateUserData({ [e.target.name]: e.target.value });
-	};
-
-	return (
-		<td colSpan={3}>
-			<input
-				type="text"
-				name={name}
-				value={value}
-				onChange={handleInputChange}
-			/>
-		</td>
-	);
-};
+import {
+	EyeIcon,
+	EyeSlashIcon,
+	PencilIcon,
+	TrashIcon,
+} from "@heroicons/react/24/outline";
+import Modal from "../modal/Modal";
 
 type TableRowProps = {
+	isAdmin: boolean;
 	rows: Rows;
 	handleDeleteRow: (id: string) => void;
-	handleEditRow: (id: string, userData: object) => void;
+	handleEditRow: (id: string, type: string, userData?: object) => void;
 };
 
-const TableRow = ({ rows, handleDeleteRow, handleEditRow }: TableRowProps) => {
-	const [userData, setUserData] = useState({
-		name: "",
-		email: "",
-		role: "",
-	});
-
-	const getUserItem = (index: number) => {
-		return index === 1 ? "name" : index === 2 ? "email" : "role";
-	};
-
-	const updateUserData = useCallback((data: object) => {
-		setUserData((prevUserData) => ({ ...prevUserData, ...data }));
-	}, []);
+const TableRow = ({
+	isAdmin,
+	rows,
+	handleDeleteRow,
+	handleEditRow,
+}: TableRowProps) => {
+	const [showModal, setShowModal] = useState({ check: false, id: "" });
 
 	const handleEdit = (id: string) => {
-		handleEditRow(id, userData);
+		if (isAdmin) return;
+		setShowModal({ check: true, id: id });
+		handleEditRow(id, "edit");
+	};
+	const handleDisable = (id: string) => {
+		if (isAdmin) return;
+		handleEditRow(id, "disable");
 	};
 
 	return (
-		<tbody>
-			{rows.map((row) => (
-				<tr
-					key={row.id}
-					className="flex justify-between items-center w-full mb-6">
-					{row.product.productData.map((item, j) => {
-						if (item === "actions") {
-							return (
-								<td
-									className="text-lg font-normal text-emerald-600 w-[10rem] text-start"
-									key={`action-${j}`}
-									colSpan={6}>
-									<button
-										className={!row.isEditing ? "edit" : "save"}
-										onClick={handleEdit.bind(null, row.id)}>
-										<div className="w-4 mr-3 text-gray-400">
-											<PencilIcon />
-										</div>
-									</button>
-									<button
-										className={!row.isEditing ? "edit" : "save"}
-										onClick={handleEdit.bind(null, row.id)}>
-										<div className="w-4 mr-3 text-gray-400">
-											<EyeIcon />
-										</div>
-									</button>
-									<button
-										className="delete"
-										onClick={handleDeleteRow.bind(null, row.id)}>
-										<div className="w-4 mr-3 text-gray-400">
-											<TrashIcon />
-										</div>
-									</button>
-								</td>
-							);
-						} else {
-							if (row.isEditing) {
+		<>
+			<tbody className="flex flex-col justify-between w-full">
+				{rows.map((row) => (
+					<tr
+						key={row.id}
+						className={`flex justify-between items-center w-full mb-6 border-b-2 border-b-gray-700 ${
+							row.isDisabled ? "text-gray-500" : "text-white"
+						}`}>
+						{row.product.productData.map((item, j) => {
+							if (item === "actions") {
 								return (
-									<RowInput
-										key={`${item}-${j}`}
-										name={getUserItem(j)}
-										currentValue={item}
-										updateUserData={updateUserData}
-									/>
+									<td
+										className="text-lg font-normal text-emerald-600 w-[10rem] text-start"
+										key={`action-${j}`}
+										colSpan={6}>
+										<button onClick={handleEdit.bind(null, row.id)}>
+											<div
+												className={`w-4 mr-3  ${
+													!isAdmin ? "text-green-400" : "text-gray-500"
+												}`}>
+												<PencilIcon />
+											</div>
+										</button>
+										<button onClick={handleDisable.bind(null, row.id)}>
+											<div
+												className={`w-4 mr-3  ${
+													!isAdmin ? "text-purple-400" : "text-gray-500"
+												}`}>
+												{row.isDisabled ? <EyeSlashIcon /> : <EyeIcon />}
+											</div>
+										</button>
+										<button onClick={handleDeleteRow.bind(null, row.id)}>
+											<div
+												className={`w-4 mr-3  ${
+													!isAdmin ? "text-red-400" : "text-gray-500"
+												}`}>
+												<TrashIcon />
+											</div>
+										</button>
+									</td>
 								);
 							} else {
 								return (
@@ -113,11 +85,19 @@ const TableRow = ({ rows, handleDeleteRow, handleEditRow }: TableRowProps) => {
 									</td>
 								);
 							}
-						}
-					})}
-				</tr>
-			))}
-		</tbody>
+						})}
+					</tr>
+				))}
+			</tbody>
+			{showModal && (
+				<Modal
+					rows={rows}
+					modal={showModal}
+					closeModal={setShowModal}
+					handleEdit={handleEditRow}
+				/>
+			)}
+		</>
 	);
 };
 

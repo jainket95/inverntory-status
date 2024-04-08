@@ -1,4 +1,9 @@
-const SwitchButton = () => {
+type SwitchProps = {
+	isAdmin: boolean;
+	setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const SwitchButton = ({ isAdmin, setAdmin }: SwitchProps) => {
 	return (
 		<div className="inline-flex items-center">
 			<div className="relative inline-block w-8 h-4 rounded-full cursor-pointer bg-gray-600">
@@ -6,7 +11,8 @@ const SwitchButton = () => {
 					id="switch-component"
 					type="checkbox"
 					className="absolute w-8 h-4 transition-colors duration-300 rounded-full appearance-none cursor-pointer peer bg-blue-gray-100 checked:bg-gray-100 peer-checked:border-gray-900 peer-checked:before:bg-gray-100"
-					defaultChecked
+					checked={isAdmin}
+					onChange={() => setAdmin(!isAdmin)}
 				/>
 				<label
 					htmlFor="switch-component"

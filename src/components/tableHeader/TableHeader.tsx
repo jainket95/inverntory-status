@@ -1,5 +1,3 @@
-import { FC } from "react";
-
 const tableHeader = [
 	"name",
 	"category",
@@ -9,17 +7,16 @@ const tableHeader = [
 	"actions",
 ];
 
-type TableHeaderProps = {};
+// type TableHeaderProps = {};
 
-const TableHeader: FC<TableHeaderProps> = () => {
+const TableHeader = () => {
 	return (
-		<thead className="w-full h-1">
-			<tr className="flex justify-between items-center w-full mb-5 ">
+		<thead className="w-full">
+			<tr className="flex justify-between items-center w-full mb-5 border-b-2 border-b-gray-700">
 				{tableHeader.map((item, j) => (
 					<th
 						key={`${item}-${j}`}
-						// colSpan={item === "actions" ? 6 : 3}
-						className="text-lg font-normal text-emerald-600 uppercase w-[10rem] text-start">
+						className="text-lg font-normal text-lime-500 uppercase w-[10rem] text-start">
 						{item}
 					</th>
 				))}

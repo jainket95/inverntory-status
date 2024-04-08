@@ -27,7 +27,7 @@ type ProductDetails = {
 export type Row = {
 	id: string;
 	product: ProductDetails;
-	isChecked: boolean;
+	isDisabled: boolean;
 	isEditing: boolean;
 };
 
