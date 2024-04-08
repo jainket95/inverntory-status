@@ -4,47 +4,9 @@ import Header from "./components/header/Header";
 import Loader from "./components/loader/Loader";
 import { generateWidgetsData } from "./utils";
 import Widgets from "./components/widgets/Widgets";
-import { Product, Row } from "./types";
+import { Product, Row, Rows } from "./types";
 import { v4 } from "uuid";
 import Table from "./components/table/Table";
-
-const data = [
-	{
-		name: "Bluetooth",
-		category: "Electronic",
-		value: "$150",
-		quantity: 5,
-		price: "$30",
-	},
-	{
-		name: "Edifier M43560",
-		category: "Electronic",
-		value: "0",
-		quantity: 0,
-		price: "$0",
-	},
-	{
-		name: "Sony 4k ultra 55 inch TV",
-		category: "Electronic",
-		value: "$1190",
-		quantity: 17,
-		price: "$70",
-	},
-	{
-		name: "Samsumg 55 inch TV",
-		category: "Electronic",
-		value: "$600",
-		quantity: 50,
-		price: "$12",
-	},
-	{
-		name: "samsumg S34 Ultra",
-		category: "phone",
-		value: "$0",
-		quantity: 0,
-		price: "$0",
-	},
-];
 
 function App() {
 	const [products, setProducts] = useState([]);
@@ -57,11 +19,11 @@ function App() {
 
 	const fetchProducts = async () => {
 		setLoading(true);
-		// const response = await fetch(
-		// 	"https://dev-0tf0hinghgjl39z.api.raw-labs.com/inventory"
-		// );
+		const response = await fetch(
+			"https://dev-0tf0hinghgjl39z.api.raw-labs.com/inventory"
+		);
 
-		// const data = await response.json();
+		const data = await response.json();
 
 		const rowsData = data.map((item: Product) => ({
 			// id: `${item.name}-${item.id}`,
